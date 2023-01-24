@@ -1,16 +1,19 @@
 from django.contrib.auth import get_user_model
 from djoser.views import UserViewSet
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import (IsAuthenticated, AllowAny)
 from rest_framework.decorators import api_view
 from django.contrib.auth.hashers import make_password
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
-from rest_framework import status
+from rest_framework import status, viewsets
 from django.db.models.expressions import Exists, OuterRef, Value
 
 from .serializers import (UserGetSerializer, TokenSerializer,
-                          UserPostSerializer, SetPasswordSerializer)
+                          UserPostSerializer, SetPasswordSerializer,
+                          TagSerializer, IngredientSerializer)
+from recipes.models import Tag, Ingredient
+from .permissions import IsAdminOrReadOnly
 
 User = get_user_model()
 
@@ -64,3 +67,15 @@ def set_password(request):
     return Response(
         {'error': 'Введенные данные не приняты. Ведите корректные данные.'},
         status=status.HTTP_400_BAD_REQUEST)
+
+
+class TagViewSet(viewsets.ModelViewSet):
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+    permission_classes = (IsAdminOrReadOnly,)
+
+
+class IngredientViewSet(viewsets.ModelViewSet):
+    queryset = Ingredient.objects.all()
+    serializer_class = IngredientSerializer
+    permission_classes = (IsAdminOrReadOnly,)

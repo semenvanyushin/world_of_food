@@ -5,6 +5,7 @@ from django.contrib.auth.hashers import make_password
 
 from users.models import User
 from .mixins import GetIsSubscribedMixin
+from recipes.models import Tag, Ingredient
 
 auth_error = 'Не удается войти в систему с предоставленными учетными данными.'
 
@@ -75,3 +76,17 @@ class SetPasswordSerializer(serializers.Serializer):
         user.password = password
         user.save()
         return validated_data
+
+
+class TagSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Tag
+        fields = ('id', 'name', 'color', 'slug',)
+
+
+class IngredientSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Ingredient
+        fields = ('id', 'name', 'measurement_unit',)
