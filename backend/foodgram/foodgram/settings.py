@@ -10,7 +10,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
-from datetime import timedelta
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -44,6 +43,7 @@ INSTALLED_APPS = [
     'djoser',
     'recipes',
     'api',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -126,21 +126,16 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-AUTH_USER_MODEL = 'recipes.User'
+AUTH_USER_MODEL = 'users.User'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.TokenAuthentication',)
+        'rest_framework.authentication.TokenAuthentication',),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',),
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
+        'rest_framework.filters.SearchFilter',),
+    # 'DEFAULT_PAGINATION_CLASS': 'api.pagination.LimitPageNumberPagination',
+    # 'PAGE_SIZE': 6,
 }
-
-EMAIL_HOST = 'smtp.gmail.com'
-
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
-
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
-
-EMAIL_PORT = 587
-
-EMAIL_USE_TLS = True
-
-EMAIL_USE_SSL = False
