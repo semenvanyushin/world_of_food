@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -23,9 +26,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'img8)5cod226w9tgpqh*na@cwo-68)mq7xv19*g$binen2wx-n'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', default='True') == 'True'
 
 ALLOWED_HOSTS = []
+
+# ALLOWED_HOSTS = os.environ.get(
+#     'ALLOWED_HOSTS', default='localhost').split(', ')
 
 
 # Application definition
@@ -41,9 +47,9 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'django_filters',
     'djoser',
-    'recipes',
-    'api',
-    'users',
+    'recipes.apps.RecipesConfig',
+    'api.apps.ApiConfig',
+    'users.apps.UsersConfig',
 ]
 
 MIDDLEWARE = [
@@ -126,6 +132,10 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+MEDIA_URL = '/media/'
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 AUTH_USER_MODEL = 'users.User'
 
 REST_FRAMEWORK = {
@@ -136,6 +146,6 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': (
         'django_filters.rest_framework.DjangoFilterBackend',
         'rest_framework.filters.SearchFilter',),
-    # 'DEFAULT_PAGINATION_CLASS': 'api.pagination.LimitPageNumberPagination',
-    # 'PAGE_SIZE': 6,
+    'DEFAULT_PAGINATION_CLASS': 'api.paginations.LimitPageNumberPagination',
+    'PAGE_SIZE': 6,
 }
