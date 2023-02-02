@@ -1,13 +1,12 @@
-from rest_framework import serializers
-from django.contrib.auth import authenticate
-import django.contrib.auth.password_validation as validators
+from django.contrib.auth import authenticate, password_validation
 from django.contrib.auth.hashers import make_password
 from drf_base64.fields import Base64ImageField
+from rest_framework import serializers
 
+from api.mixins import GetIsSubscribedMixin
+from recipes.models import (Ingredient, Recipe, RecipeIngredient,
+                            Subscription, Tag)
 from users.models import User
-from .mixins import GetIsSubscribedMixin
-from recipes.models import (Tag, Ingredient, Recipe, Subscription,
-                            RecipeIngredient)
 
 auth_error = 'Не удается войти в систему с предоставленными учетными данными.'
 
@@ -53,7 +52,7 @@ class UserPostSerializer(serializers.ModelSerializer):
                   'first_name', 'last_name', 'password',)
 
     def validate_password(self, password):
-        validators.validate_password(password)
+        password_validation.validate_password(password)
         return password
 
 
@@ -69,7 +68,7 @@ class SetPasswordSerializer(serializers.Serializer):
         return current_password
 
     def validate_new_password(self, new_password):
-        validators.PasswordValidator(new_password)
+        password_validation.PasswordValidator(new_password)
         return new_password
 
     def create(self, validated_data):

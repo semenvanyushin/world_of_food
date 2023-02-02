@@ -1,33 +1,34 @@
 import io
 
 from django.contrib.auth import get_user_model
+from django.contrib.auth.hashers import make_password
 from django.db.models.aggregates import Count, Sum
+from django.db.models.expressions import Exists, OuterRef, Value
+from django.http import FileResponse
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
-from django.http import FileResponse
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
-from rest_framework.permissions import (IsAuthenticated, AllowAny,
-                                        SAFE_METHODS,
-                                        IsAuthenticatedOrReadOnly)
-from rest_framework.decorators import api_view, action
-from django.contrib.auth.hashers import make_password
-from rest_framework.response import Response
+from rest_framework import generics, status, viewsets
 from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
-from rest_framework import status, viewsets, generics
-from django.db.models.expressions import Exists, OuterRef, Value
+from rest_framework.decorators import action, api_view
+from rest_framework.permissions import (AllowAny, IsAuthenticated,
+                                        IsAuthenticatedOrReadOnly,
+                                        SAFE_METHODS)
+from rest_framework.response import Response
 
-from .serializers import (UserGetSerializer, TokenSerializer,
-                          UserPostSerializer, SetPasswordSerializer,
-                          TagSerializer, IngredientSerializer,
-                          RecipeGetSerializer, RecipePostSerilaizer,
-                          SubscriptionSerializer, SubscriptionRecipeSerializer)
-from recipes.models import (Tag, Ingredient, Recipe, FavoriteRecipe,
-                            ShoppingCart, Subscription)
-from .permissions import IsAdminOrReadOnly
-from .filters import IngredientFilter, RecipeFilter
+from api.filters import IngredientFilter, RecipeFilter
+from api.permissions import IsAdminOrReadOnly
+from api.serializers import (IngredientSerializer, RecipeGetSerializer,
+                             RecipePostSerilaizer, SetPasswordSerializer,
+                             SubscriptionRecipeSerializer,
+                             SubscriptionSerializer, TagSerializer,
+                             TokenSerializer, UserGetSerializer,
+                             UserPostSerializer)
+from recipes.models import (FavoriteRecipe, Ingredient, Recipe,
+                            ShoppingCart, Subscription, Tag)
 
 User = get_user_model()
 
@@ -35,7 +36,7 @@ User = get_user_model()
 class GetObjectMixin:
     """
     Миксин для добавления или удаления рецептов
-    в избранных или списоке покупок.
+    в избранных или списке покупок.
     """
     serializer_class = SubscriptionRecipeSerializer
     permission_classes = (AllowAny,)
