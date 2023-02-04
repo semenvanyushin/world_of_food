@@ -71,8 +71,9 @@ class UsersViewSet(UserViewSet):
 
     def get_queryset(self):
         if self.request.user.is_authenticated:
-            return User.objects.annotate(is_subscribed=Exists(
-                self.request.user.follower.filter(author=OuterRef('id')))
+            return User.objects.annotate(
+                is_subscribed=Exists(self.request.user.follower.filter(
+                    author=OuterRef('id')))
             ).prefetch_related('follower', 'following')
         else:
             return User.objects.annotate(is_subscribed=Value(False))
@@ -146,10 +147,12 @@ class RecipesViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         if self.request.user.is_authenticated:
             return Recipe.objects.annotate(
-                is_favorited=Exists(FavoriteRecipe.objects.filter(
-                    user=self.request.user, recipe=OuterRef('id'))),
-                is_in_shopping_cart=Exists(ShoppingCart.objects.filter(
-                    user=self.request.user, recipe=OuterRef('id')))
+                is_favorited=Exists(
+                    FavoriteRecipe.objects.filter(
+                        user=self.request.user, recipe=OuterRef('id'))),
+                is_in_shopping_cart=Exists(
+                    ShoppingCart.objects.filter(
+                        user=self.request.user, recipe=OuterRef('id')))
             ).select_related('author').prefetch_related(
                 'tags', 'ingredients', 'recipe',
                 'shopping_cart', 'favorite_recipe')
