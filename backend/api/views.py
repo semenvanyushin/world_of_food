@@ -21,8 +21,8 @@ from rest_framework.response import Response
 
 from api.filters import IngredientFilter, RecipeFilter
 from api.permissions import IsAdminOrReadOnly
-from api.serializers import (IngredientSerializer, RecipeGetSerializer,
-                             RecipePostSerilaizer, SetPasswordSerializer,
+from api.serializers import (IngredientSerializer, RecipeReadSerializer,
+                             RecipeWhriteSerilaizer, SetPasswordSerializer,
                              SubscriptionRecipeSerializer,
                              SubscriptionSerializer, TagSerializer,
                              TokenSerializer, UserGetSerializer,
@@ -60,8 +60,7 @@ class AuthToken(ObtainAuthToken):
         user = serializer.validated_data['user']
         token, created = Token.objects.get_or_create(user=user)
         return Response(
-            {'auth_token': token.key},
-            status=status.HTTP_201_CREATED)
+            {'auth_token': token.key}, status=status.HTTP_201_CREATED)
 
 
 class UsersViewSet(UserViewSet):
@@ -74,7 +73,7 @@ class UsersViewSet(UserViewSet):
         if self.request.user.is_authenticated:
             return User.objects.annotate(is_subscribed=Exists(
                 self.request.user.follower.filter(author=OuterRef('id')))
-                ).prefetch_related('follower', 'following')
+            ).prefetch_related('follower', 'following')
         else:
             return User.objects.annotate(is_subscribed=Value(False))
 
@@ -101,7 +100,8 @@ class UsersViewSet(UserViewSet):
 def set_password(request):
     """Меняет пароль пользователя."""
 
-    serializer = SetPasswordSerializer()
+    serializer = SetPasswordSerializer(
+        data=request.data, context={'request': request})
     if serializer.is_valid():
         serializer.save()
         return Response(
@@ -135,9 +135,13 @@ class RecipesViewSet(viewsets.ModelViewSet):
     """Рецепты."""
 
     queryset = Recipe.objects.all()
-    serializer_class = RecipeGetSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
     filterset_class = RecipeFilter
+
+    def get_serializer_class(self):
+        if self.request.method in SAFE_METHODS:
+            return RecipeReadSerializer
+        return RecipeWhriteSerilaizer
 
     def get_queryset(self):
         if self.request.user.is_authenticated:
@@ -146,21 +150,16 @@ class RecipesViewSet(viewsets.ModelViewSet):
                     user=self.request.user, recipe=OuterRef('id'))),
                 is_in_shopping_cart=Exists(ShoppingCart.objects.filter(
                     user=self.request.user, recipe=OuterRef('id')))
-                ).select_related('author').prefetch_related(
-                    'tags', 'ingredients', 'recipe',
-                    'shopping_cart', 'favorite_recipe')
+            ).select_related('author').prefetch_related(
+                'tags', 'ingredients', 'recipe',
+                'shopping_cart', 'favorite_recipe')
         else:
             return Recipe.objects.annotate(
                 is_favorited=Value(False),
                 is_in_shopping_cart=Value(False)
-                ).select_related('author').prefetch_related(
-                    'tags', 'ingredients', 'recipe',
-                    'shopping_cart', 'favorite_recipe')
-
-    def get_serializer_class(self):
-        if self.request.method in SAFE_METHODS:
-            return RecipeGetSerializer
-        return RecipePostSerilaizer
+            ).select_related('author').prefetch_related(
+                'tags', 'ingredients', 'recipe',
+                'shopping_cart', 'favorite_recipe')
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -175,9 +174,9 @@ class RecipesViewSet(viewsets.ModelViewSet):
         pdfmetrics.registerFont(TTFont('Vera', 'Vera.ttf'))
         x_position, y_position = 50, 800
         shopping_cart = (request.user.shopping_cart.recipe.values(
-                'ingredients__name',
-                'ingredients__measurement_unit'
-            ).annotate(amount=Sum('recipe__amount')).order_by())
+            'ingredients__name',
+            'ingredients__measurement_unit'
+        ).annotate(amount=Sum('recipe__amount')).order_by())
         page.setFont('Vera', 14)
         if shopping_cart:
             indent = 20

@@ -1,13 +1,15 @@
-from django.contrib.auth import authenticate, password_validation
+from django.contrib.auth import (authenticate, get_user_model,
+                                 password_validation)
 from django.contrib.auth.hashers import make_password
+from django.shortcuts import get_object_or_404
 from drf_base64.fields import Base64ImageField
 from rest_framework import serializers
 
 from api.mixins import GetIsSubscribedMixin
 from recipes.models import (Ingredient, Recipe, RecipeIngredient,
                             Subscription, Tag)
-from users.models import User
 
+User = get_user_model()
 auth_error = 'Не удается войти в систему с предоставленными учетными данными.'
 
 
@@ -68,7 +70,7 @@ class SetPasswordSerializer(serializers.Serializer):
         return current_password
 
     def validate_new_password(self, new_password):
-        password_validation.PasswordValidator(new_password)
+        password_validation.validate_password(new_password)
         return new_password
 
     def create(self, validated_data):
@@ -122,7 +124,7 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'measurement_unit', 'amount',)
 
 
-class RecipeGetSerializer(serializers.ModelSerializer):
+class RecipeReadSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True, read_only=True)
     author = RecipeUserSerializer(
         read_only=True, default=serializers.CurrentUserDefault())
@@ -139,16 +141,81 @@ class RecipeGetSerializer(serializers.ModelSerializer):
                   'name', 'image', 'text', 'cooking_time')
 
 
-class RecipePostSerilaizer(serializers.ModelSerializer):
+class RecipeWhriteSerilaizer(serializers.ModelSerializer):
     image = Base64ImageField(use_url=True)
     tags = serializers.PrimaryKeyRelatedField(
         many=True, queryset=Tag.objects.all())
     ingredients = IngredientPatchSerilizer(many=True)
+    author = serializers.SlugRelatedField(
+        slug_field='username', read_only=True)
 
     class Meta:
         model = Recipe
         fields = '__all__'
-        read_only_field = ('author',)
+
+    def validate(self, data):
+        ingredients = data['ingredients']
+        ingredient_list = []
+        for items in ingredients:
+            ingredient = get_object_or_404(Ingredient, id=items['id'])
+            if ingredient in ingredient_list:
+                raise serializers.ValidationError(
+                    'Ингредиент должен быть уникальным!')
+            ingredient_list.append(ingredient)
+        tags = data['tags']
+        if not tags:
+            raise serializers.ValidationError(
+                'Выберите минимум 1 тег!')
+        for tag_name in tags:
+            if not Tag.objects.filter(name=tag_name).exists():
+                raise serializers.ValidationError(
+                    f'Тэга {tag_name} не существует!')
+        return data
+
+    def validate_cooking_time(self, cooking_time):
+        if int(cooking_time) < 1:
+            raise serializers.ValidationError(
+                'Время приготовления не должно быть меньше 1!')
+        return cooking_time
+
+    def validate_ingredients(self, ingredients):
+        if not ingredients:
+            raise serializers.ValidationError(
+                'В рецепте не должно быть меньше 1 ингредиента!')
+        for ingredient in ingredients:
+            if int(ingredient.get('amount')) < 1:
+                raise serializers.ValidationError(
+                    'Количество ингредиента не должно быть меньше 1!')
+        return ingredients
+
+    def create_ingredients(self, ingredients, recipe):
+        for ingredient in ingredients:
+            RecipeIngredient.objects.create(
+                recipe=recipe,
+                ingredient_id=ingredient.get('id'),
+                amount=ingredient.get('amount'),)
+
+    def create(self, validated_data):
+        ingredients = validated_data.pop('ingredients')
+        tags = validated_data.pop('tags')
+        recipe = Recipe.objects.create(**validated_data)
+        recipe.tags.set(tags)
+        self.create_ingredients(ingredients, recipe)
+        return recipe
+
+    def update(self, instance, validated_data):
+        if 'ingredients' in validated_data:
+            ingredients = validated_data.pop('ingredients')
+            instance.ingredients.clear()
+            self.create_ingredients(ingredients, instance)
+        if 'tags' in validated_data:
+            instance.tags.set(validated_data.pop('tags'))
+        return super().update(instance, validated_data)
+
+    def to_representation(self, instance):
+        return RecipeReadSerializer(
+            instance,
+            context={'request': self.context.get('request')}).data
 
 
 class SubscriptionRecipeSerializer(serializers.ModelSerializer):

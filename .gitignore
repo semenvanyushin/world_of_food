@@ -131,4 +131,7 @@ dmypy.json
 # .idea
 .idea
 
-.backend/foodgram/static/
+static/
+media/
+.vscode/
+.DS_Store
