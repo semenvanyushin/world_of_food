@@ -31,7 +31,7 @@ DEBUG = False
 
 CSRF_TRUSTED_ORIGINS = ['http://localhost']
 
-ALLOWED_HOSTS = ['127.0.0.1', 'backend', 'localhost']
+ALLOWED_HOSTS = ['127.0.0.1, backend, localhost']
 
 # Application definition
 
