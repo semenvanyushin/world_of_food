@@ -17,10 +17,10 @@ SECRET_KEY = 'img8)5cod226w9tgpqh*na@cwo-68)mq7xv19*g$binen2wx-n'
 # DEBUG = True
 DEBUG = False
 
-CSRF_TRUSTED_ORIGINS = ['http://localhost']
+# ALLOWED_HOSTS = ['127.0.0.1', 'backend', 'localhost', '51.250.103.116']
+ALLOWED_HOSTS = ['*']
 
-ALLOWED_HOSTS = ['127.0.0.1', 'backend', 'localhost', '51.250.103.116']
-
+CSRF_TRUSTED_ORIGINS = ['http://*localhost', 'http://51.250.103.116']
 # Application definition
 
 INSTALLED_APPS = [
