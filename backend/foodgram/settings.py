@@ -27,12 +27,11 @@ SECRET_KEY = 'img8)5cod226w9tgpqh*na@cwo-68)mq7xv19*g$binen2wx-n'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = True
-DEBUG = os.getenv('DEBUG', default='True') == 'True'
+DEBUG = False
 
 CSRF_TRUSTED_ORIGINS = ['http://localhost']
 
-ALLOWED_HOSTS = os.environ.get(
-    'ALLOWED_HOSTS', default='localhost').split(', ')
+ALLOWED_HOSTS = ['127.0.0.1', 'backend', 'localhost']
 
 # Application definition
 
