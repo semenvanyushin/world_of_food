@@ -20,7 +20,7 @@ DEBUG = False
 # ALLOWED_HOSTS = ['127.0.0.1', 'backend', 'localhost', '51.250.103.116']
 ALLOWED_HOSTS = ['*']
 
-CSRF_TRUSTED_ORIGINS = ['http://*localhost']
+CSRF_TRUSTED_ORIGINS = ['http://*localhost', 'http://51.250.103.116']
 # Application definition
 
 INSTALLED_APPS = [
