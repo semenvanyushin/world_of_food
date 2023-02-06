@@ -8,8 +8,8 @@ User = get_user_model()
 
 
 class Tag(models.Model):
-    name = models.CharField('название тега', max_length=50, unique=True)
-    color = models.CharField('цвет тега', max_length=10, unique=True)
+    name = models.CharField('название тега', max_length=60, unique=True)
+    color = models.CharField('цвет тега', max_length=7, unique=True)
     slug = models.SlugField('слаг тега', max_length=100, unique=True)
 
     class Meta:
@@ -22,8 +22,8 @@ class Tag(models.Model):
 
 
 class Ingredient(models.Model):
-    name = models.CharField('название ингридиента', max_length=150)
-    measurement_unit = models.CharField('единица измерения', max_length=50)
+    name = models.CharField('название ингридиента', max_length=250)
+    measurement_unit = models.CharField('единица измерения', max_length=250)
 
     class Meta:
         ordering = ['name']
@@ -31,14 +31,14 @@ class Ingredient(models.Model):
         verbose_name_plural = 'Ингредиенты'
 
     def __str__(self):
-        return f'{self.name} {self.measurement_unit}'
+        return f'{self.name}, {self.measurement_unit}.'
 
 
 class Recipe(models.Model):
     author = models.ForeignKey(
         User, on_delete=models.CASCADE,
         related_name='recipe', verbose_name='автор')
-    name = models.CharField('название рецепта', max_length=200)
+    name = models.CharField('название рецепта', max_length=250)
     image = models.ImageField('изображение', upload_to='static/recipes/')
     text = models.TextField('текстовое описание')
     ingredients = models.ManyToManyField(

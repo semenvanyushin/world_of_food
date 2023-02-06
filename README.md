@@ -87,6 +87,11 @@ docker-compose exec backend python manage.py createsuperuser
 ```bash
 docker-compose exec backend python manage.py collectstatic --no-input
 ```
+Заполнение базы данных тегами и ингредиентами(по желанию):
+```bash
+docker-compose exec backend python manage.py load_tags
+docker-compose exec backend python manage.py load_ingredients
+```
 
 ### Запуск в режиме разработчика:
 
@@ -116,8 +121,10 @@ python3 manage.py runserver
 
 ## Проект доступен по адресам:
 
+```bash
 http://youhost/admin
 http://youhost/recipes
+```
 
 ## Документация к API доступна после запуска проекта по адресу:
 
