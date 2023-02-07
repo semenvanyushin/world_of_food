@@ -17,7 +17,7 @@ class Recipe(admin.ModelAdmin):
                     'get_favorite_count')
     search_fields = ('name', 'cooking_time', 'author__email',
                      'ingredients__name')
-    list_filter = ('pub_date', 'tags',)
+    list_filter = ('name', 'author', 'pub_date', 'tags',)
     inlines = (RecipeIngredient,)
     empty_value_display = '-пусто-'
 
@@ -55,6 +55,7 @@ class Tag(admin.ModelAdmin):
 class Ingredient(admin.ModelAdmin):
     list_display = ('id', 'name', 'measurement_unit',)
     search_fields = ('name', 'measurement_unit',)
+    list_filter = ('name',)
     empty_value_display = '-пусто-'
 
 
