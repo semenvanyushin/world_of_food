@@ -103,11 +103,11 @@ def set_password(request):
 
     serializer = SetPasswordSerializer(
         data=request.data, context={'request': request})
-    if serializer.is_valid(raise_exception=True):
-        serializer.save()
-        return Response(
-            {'message': 'Пароль успешно изменен'},
-            status=status.HTTP_201_CREATED)
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+    return Response(
+        {'message': 'Пароль успешно изменен'},
+        status=status.HTTP_201_CREATED)
 
 
 class TagViewSet(viewsets.ModelViewSet):
