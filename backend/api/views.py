@@ -103,14 +103,11 @@ def set_password(request):
 
     serializer = SetPasswordSerializer(
         data=request.data, context={'request': request})
-    if serializer.is_valid():
+    if serializer.is_valid(raise_exception=True):
         serializer.save()
         return Response(
             {'message': 'Пароль успешно изменен'},
             status=status.HTTP_201_CREATED)
-    return Response(
-        {'error': 'Введенные данные не приняты. Ведите корректные данные.'},
-        status=status.HTTP_400_BAD_REQUEST)
 
 
 class TagViewSet(viewsets.ModelViewSet):

@@ -74,6 +74,7 @@ TELEGRAM_TO # id пользователя. Ему бот будет отправ
 TELEGRAM_TOKEN # токен бота телеграм, от имени которого будет приходить сообщение
 DOCKER_USERNAME # Имя пользователя Docker для выгрузки образа в DockerHub
 DOCKER_PASSWORD # Пароль пользоывателя Docker
+SECRET_KEY # Ваш SECRET_KEY из settings.py
 ```
 
 ### Запуск с использованием Docker:
