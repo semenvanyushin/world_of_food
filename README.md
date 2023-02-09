@@ -1,6 +1,13 @@
 # Продуктовый помощник Foodgram
 ![Foodgram workflow](https://github.com/semenvanyushin/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg)
-![https://img.shields.io/badge/Python-3.10-green](https://www.python.org/downloads/)
+![Python](https://img.shields.io/badge/Python-3.10.9-green)
+![Django](https://img.shields.io/badge/Django-4.1.6-blue)
+![Django REST framework](https://img.shields.io/badge/Django%20REST%20framework-3.14.0-blue)
+![Djoser](https://img.shields.io/badge/Djoser-2.1.0-blue)
+![Gunicorn](https://img.shields.io/badge/Gunicorn-20.1.0-br)
+![PostgreSQL](https://img.shields.io/badge/PosrgreSQL-14.6-blue)
+![NGINX](https://img.shields.io/badge/NGINX-1.21.3-brightgreen)
+
 
 ## Описание проекта:
 Foodgram - вебсайт, который дает возможность публиковать свои и добавлять в избранные рецепты других авторов, подписываться на пользователей. Для приготовления избранных блюд доступен для загрузки список ингредиентов в виде файла в формате .pdf.
