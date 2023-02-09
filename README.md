@@ -1,5 +1,5 @@
 # Продуктовый помощник Foodgram
-![Foodgram workflow](https://github.com/semenvanyushin/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg)
+![Foodgram workflow](https://github.com/semenvanyushin/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg?event=push)
 ![Python](https://img.shields.io/badge/Python-3.10.9-green)
 ![Django](https://img.shields.io/badge/Django-4.1.6-blue)
 ![Django REST framework](https://img.shields.io/badge/Django%20REST%20framework-3.14.0-blue)
