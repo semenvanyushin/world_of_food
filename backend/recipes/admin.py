@@ -27,7 +27,6 @@ class Recipe(admin.ModelAdmin):
 
     @admin.display(description='Теги')
     def get_tags(self, obj):
-        # return ','.join([_.name for _ in obj.tags.all()])
         return list(obj.tags.values_list('name', flat=True))
 
     @admin.display(description='Ингридиенты')
