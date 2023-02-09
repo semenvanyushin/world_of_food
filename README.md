@@ -1,6 +1,6 @@
 # Продуктовый помощник Foodgram
 ![Foodgram workflow](https://github.com/semenvanyushin/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg)
-![[(https://www.python.org/downloads/)](https://img.shields.io/badge/Python-3.10-green)
+![(https://img.shields.io/badge/Python-3.10-green)](https://www.python.org/downloads/)
 
 ## Описание проекта:
 Foodgram - вебсайт, который дает возможность публиковать свои и добавлять в избранные рецепты других авторов, подписываться на пользователей. Для приготовления избранных блюд доступен для загрузки список ингредиентов в виде файла в формате .pdf.
