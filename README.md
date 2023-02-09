@@ -7,6 +7,7 @@
 ![Gunicorn](https://img.shields.io/badge/Gunicorn-20.1.0-br)
 ![PostgreSQL](https://img.shields.io/badge/PosrgreSQL-14.6-blue)
 ![NGINX](https://img.shields.io/badge/NGINX-1.21.3-brightgreen)
+![Docker](https://img.shields.io/badge/Docker-20.10.22-blue)
 
 
 ## Описание проекта:
